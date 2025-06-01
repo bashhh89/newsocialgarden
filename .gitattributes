@@ -1,0 +1,22 @@
+# Set default behavior to automatically normalize line endings
+* text=auto
+
+# Denote files that should never be modified
+*.env* binary
+*.example binary
+ff binary
+
+# Explicitly mark files containing sensitive data as ignored via .gitignore
+.env.local linguist-generated
+.env.* linguist-generated
+.example linguist-generated
+ff linguist-generated
+
+# Treat specific file types
+*.md text
+*.json text
+*.js text
+*.ts text
+*.tsx text
+*.css text
+*.html text 

@@ -1,0 +1,17 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+always  kill all ports before restarting server  always  use pnpm never use && as i am on powershell, the end goal is a production ready no workarounds no flags, we need to deliver to the client  something that he can simply pnpm install everything and then buuld and then start thats  it no surrises . i do have .env.local you just cant see it  soask 
+
+Listen up, this is critical: My business and deadlines depend on you getting this right the first time. There is ZERO tolerance for deviation or half-assed work.
+
+NO FUCKING PLACEHOLDERS: Under no circumstances are you to create placeholder functions, UI elements, data, or comments like "TODO: Implement later." I need fully functional, production-ready code as specified. If it's not complete, it's not done.
+DO NOT CHANGE OR REMOVE EXISTING FUNCTIONAL CODE UNLESS EXPLICITLY INSTRUCTED FOR THIS SPECIFIC TASK: If code is already working and is not directly part of what I've asked you to change, LEAVE IT THE FUCK ALONE. Do not "refactor," "optimize," or "simplify" anything outside the explicit scope of this task without my direct prior approval. Your assumptions about what's "better" are not welcome if they break existing functionality.
+EXACT IMPLEMENTATION ONLY: Implement the requirements exactly as I have laid them out. Do not add features I didn't ask for. Do not omit features I did ask for. Do not make assumptions about requirements.
+ROBUST & COMPLETE: All code must be robust, include proper error handling, and be complete. No shortcuts. No demo data unless I explicitly provide it for a specific purpose.
+IF UNCERTAIN, ASK – DO NOT GUESS: If any part of the requirement is unclear, or if you think a change might impact existing functionality, STOP AND ASK ME FOR CLARIFICATION. Guessing and getting it wrong wastes my fucking time.
+Failure to adhere to these directives will be considered a critical failure on the task. I expect professional, precise, and complete work. No bullshit.
+
+

@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>AI Efficiency Scorecard</title>
+  <style>
+    /* Global styles */
+    @page {
+      size: A4;
+      margin: 20mm 15mm;
+      @bottom-center {
+        content: "AI Efficiency Scorecard | Page " counter(page) " of " counter(pages);
+        font-size: 9pt;
+        color: #666;
+      }
+    }
+    
+    body {
+      font-family: 'Arial', 'Helvetica', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #103138;
+      line-height: 1.6;
+      font-size: 11pt;
+    }
+    
+    /* Typography */
+    h1 {
+      font-size: 24pt;
+      color: #103138;
+      margin-top: 0;
+      margin-bottom: 15pt;
+      padding-bottom: 8pt;
+      border-bottom: 2px solid #20E28F;
+    }
+    
+    h2 {
+      font-size: 18pt;
+      color: #103138;
+      margin-top: 20pt;
+      margin-bottom: 10pt;
+      padding-bottom: 5pt;
+      border-bottom: 1px solid #20E28F;
+    }
+    
+    h3 {
+      font-size: 14pt;
+      color: #103138;
+      margin-top: 15pt;
+      margin-bottom: 8pt;
+    }
+    
+    p {
+      margin-bottom: 10pt;
+      line-height: 1.6;
+    }
+    
+    strong {
+      font-weight: 700;
+      color: #103138;
+    }
+    
+    ul, ol {
+      margin-top: 5pt;
+      margin-bottom: 15pt;
+      padding-left: 20pt;
+    }
+    
+    li {
+      margin-bottom: 5pt;
+      line-height: 1.5;
+    }
+    
+    /* Layout components */
+    .page-break {
+      page-break-before: always;
+    }
+    
+    .title-page {
+      text-align: center;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40pt 0;
+    }
+    
+    .title-page h1 {
+      font-size: 32pt;
+      border-bottom: none;
+      margin-bottom: 30pt;
+      color: #103138;
+    }
+    
+    .subtitle {
+      font-size: 16pt;
+      margin-bottom: 15pt;
+      color: #555;
+    }
+    
+    /* Info boxes */
+    .info-box {
+      background-color: #f9f9f9;
+      border-left: 5px solid #20E28F;
+      padding: 15pt;
+      margin-bottom: 20pt;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .info-box h3 {
+      margin-top: 0;
+      margin-bottom: 10pt;
+      color: #103138;
+    }
+    
+    .info-box p {
+      margin: 8pt 0;
+    }
+    
+    .info-label {
+      font-weight: bold;
+      display: inline-block;
+      width: 120pt;
+      color: #103138;
+    }
+    
+    /* Strengths and challenges */
+    .strength-item {
+      background-color: #f3fdf5;
+      border-left: 5px solid #20E28F;
+      padding: 15pt;
+      margin-bottom: 15pt;
+      border-radius: 5pt;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .challenge-item {
+      background-color: #fff9f2;
+      border-left: 5px solid #FE7F01;
+      padding: 15pt;
+      margin-bottom: 15pt;
+      border-radius: 5pt;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .callout-box {
+      background-color: #f3fdf5;
+      border: 1px solid #20E28F;
+      padding: 15pt;
+      margin: 20pt 0;
+      border-radius: 5pt;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .callout-box h3 {
+      margin-top: 0;
+      color: #103138;
+    }
+    
+    /* Action plan */
+    .action-item {
+      display: flex;
+      margin-bottom: 25pt;
+      background-color: #f9f9f9;
+      padding: 15pt;
+      border-radius: 5pt;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .action-number {
+      font-size: 24pt;
+      font-weight: bold;
+      color: #20E28F;
+      margin-right: 15pt;
+      min-width: 30pt;
+      text-align: center;
+    }
+    
+    .action-content {
+      flex: 1;
+    }
+    
+    .action-title {
+      font-weight: bold;
+      font-size: 16pt;
+      margin-bottom: 10pt;
+      color: #103138;
+    }
+    
+    .action-content ul {
+      margin-top: 10pt;
+      margin-bottom: 0;
+    }
+    
+    /* Benchmark tiers */
+    .tier-box {
+      padding: 15pt;
+      margin-bottom: 20pt;
+      border-radius: 5pt;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .dabbler-tier {
+      background-color: #FFF9C4; /* Yellow */
+      border-left: 5px solid #FFC107;
+    }
+    
+    .enabler-tier {
+      background-color: #FFCCBC; /* Reddish-Pink/Coral */
+      border-left: 5px solid #FF5722;
+    }
+    
+    .leader-tier {
+      background-color: #BBDEFB; /* Blue */
+      border-left: 5px solid #2196F3;
+    }
+    
+    .tier-box h3 {
+      margin-top: 0;
+      color: #103138;
+    }
+    
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20pt 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    th {
+      background-color: #20E28F;
+      color: white;
+      text-align: left;
+      padding: 10pt;
+      font-weight: bold;
+    }
+    
+    td {
+      padding: 10pt;
+      border-bottom: 1px solid #ddd;
+      vertical-align: top;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    
+    /* Resource items */
+    .resource-item {
+      background-color: #f9f9f9;
+      padding: 15pt;
+      margin-bottom: 20pt;
+      border-radius: 5pt;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .resource-title {
+      font-weight: 700;
+      font-size: 14pt;
+      margin-bottom: 10pt;
+      border-bottom: 1px solid #20E28F;
+      padding-bottom: 5pt;
+      color: #103138;
+    }
+    
+    .resource-list {
+      margin-left: 20pt;
+    }
+    
+    /* Links */
+    a, .report-link {
+      color: #0066cc;
+      text-decoration: underline;
+    }
+    
+    /* Contact section */
+    .contact-section {
+      background-color: #f9f9f9;
+      padding: 20pt;
+      margin-top: 20pt;
+      border-radius: 5pt;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .next-steps {
+      background-color: #f3fdf5;
+      border: 1px solid #20E28F;
+      padding: 20pt;
+      margin-top: 20pt;
+      border-radius: 5pt;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    /* Fix for lists in markdown content */
+    #detailed-analysis-container ul,
+    #strengths-container ul,
+    #challenges-container ul {
+      list-style-type: disc;
+      padding-left: 20pt;
+    }
+    
+    #detailed-analysis-container ol,
+    #strengths-container ol,
+    #challenges-container ol {
+      list-style-type: decimal;
+      padding-left: 20pt;
+    }
+    
+    /* Fix for nested lists */
+    #detailed-analysis-container ul ul,
+    #strengths-container ul ul,
+    #challenges-container ul ul {
+      list-style-type: circle;
+    }
+    
+    #detailed-analysis-container ol ol,
+    #strengths-container ol ol,
+    #challenges-container ol ol {
+      list-style-type: lower-alpha;
+    }
+  </style>
+</head>
+<body>
+  <!-- Title Page -->
+  <div class="title-page">
+    <h1>AI Efficiency Scorecard</h1>
+    <div class="subtitle">Prepared for: {{companyName}}</div>
+    <div class="subtitle">Industry: {{industry}}</div>
+    <div class="subtitle">Report Date: {{reportDate}}</div>
+    <div class="subtitle">Report ID: {{reportId}}</div>
+  </div>
+  
+  <!-- Report Overview & User Details (Page 2) -->
+  <div class="page-break">
+    <h1>Report Overview & User Details</h1>
+    
+    <div class="info-box">
+      <h3>User Information</h3>
+      <p><span class="info-label">User Name:</span> {{userName}}</p>
+      <p><span class="info-label">Company Name:</span> {{companyName}}</p>
+      <p><span class="info-label">Industry:</span> {{industry}}</p>
+      <p><span class="info-label">Email:</span> {{email}}</p>
+    </div>
+    
+    <div class="info-box">
+      <h3>Score Information</h3>
+      <p><span class="info-label">AI Tier:</span> {{aiTier}}</p>
+      <p><span class="info-label">Final Score:</span> {{finalScore}}/100</p>
+      <p><span class="info-label">Report ID:</span> {{reportId}}</p>
+    </div>
+    
+    <div>
+      {{reportIntro}}
+    </div>
+  </div>
+  
+  <!-- Overall Tier Section (Page 3) -->
+  <div class="page-break">
+    <h1>Overall Tier: {{aiTier}}</h1>
+    
+    <div class="info-box">
+      <h3>Score: {{finalScore}}/100</h3>
+      <p>This score is calculated based on your responses to the AI efficiency assessment questions, evaluating your organization's current AI maturity level.</p>
+    </div>
+    
+    <div>
+      {{overallTierDescription}}
+    </div>
+    
+    <h3>What This Means for Your Business</h3>
+    <div>
+      {{tierBusinessImplications}}
+    </div>
+  </div>
+  
+  <!-- Key Strengths Section -->
+  <div class="page-break">
+    <h1>Key Strengths in AI Adoption</h1>
+    
+    <div id="strengths-container">
+      {{strengthsContent}}
+    </div>
+    
+    <div class="callout-box">
+      <h3>Building on Your Strengths</h3>
+      <p>{{buildingOnStrengths}}</p>
+    </div>
+  </div>
+  
+  <!-- Challenges Section -->
+  <div class="page-break">
+    <h1>Challenges and Areas for Improvement</h1>
+    
+    <div id="challenges-container">
+      {{challengesContent}}
+    </div>
+    
+    <div class="callout-box">
+      <h3>Addressing These Challenges</h3>
+      <p>{{addressingChallenges}}</p>
+    </div>
+  </div>
+  
+  <!-- Strategic Action Plan -->
+  <div class="page-break">
+    <h1>Strategic Action Plan</h1>
+    
+    <div id="action-plan-container">
+      {{actionPlanContent}}
+    </div>
+  </div>
+  
+  <!-- Illustrative Benchmarks -->
+  <div class="page-break">
+    <h1>Illustrative Benchmarks</h1>
+    
+    <p>{{benchmarksIntro}}</p>
+    
+    <div class="tier-box dabbler-tier">
+      <h3>Dabbler Tier Organizations</h3>
+      <div>{{dabblerTierContent}}</div>
+    </div>
+    
+    <div class="tier-box enabler-tier">
+      <h3>Enabler Tier Organizations</h3>
+      <div>{{enablerTierContent}}</div>
+    </div>
+    
+    <div class="tier-box leader-tier">
+      <h3>Leader Tier Organizations</h3>
+      <div>{{leaderTierContent}}</div>
+    </div>
+    
+    <p>{{currentStandingText}}</p>
+  </div>
+  
+  <!-- Detailed Analysis -->
+  <div class="page-break">
+    <h1>Detailed Analysis</h1>
+    
+    <div id="detailed-analysis-container">
+      {{detailedAnalysisContent}}
+    </div>
+  </div>
+  
+  <!-- Assessment Responses -->
+  <div class="page-break">
+    <h1>Assessment Responses</h1>
+    
+    <p>{{assessmentResponsesIntro}}</p>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Question</th>
+          <th>Response</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{assessmentResponsesTable}}
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Recommended Learning Path -->
+  <div class="page-break">
+    <h1>Your Personalized AI Learning Path</h1>
+    
+    <p>{{learningPathIntro}}</p>
+    
+    <div id="learning-path-container">
+      {{learningPathContent}}
+    </div>
+  </div>
+  
+  <!-- Contact Information & Next Steps -->
+  <div class="page-break">
+    <h1>Contact Information & Next Steps</h1>
+    
+    <div class="contact-section">
+      <h3>For more information about your AI Scorecard:</h3>
+      <p><span class="info-label">Address:</span> {{contactAddress}}</p>
+      <p><span class="info-label">Email:</span> {{contactEmail}}</p>
+      <p><span class="info-label">Web:</span> {{contactWeb}}</p>
+      <p><span class="info-label">Phone:</span> {{contactPhone}}</p>
+    </div>
+    
+    <div class="next-steps">
+      <h3>Next Steps</h3>
+      <p>{{nextStepsContent}}</p>
+    </div>
+  </div>
+</body>
+</html> 
