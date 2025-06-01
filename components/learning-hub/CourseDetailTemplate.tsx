@@ -7,7 +7,7 @@ import remarkGfm from 'remark-gfm';
 import SidebarNav from './SidebarNav';
 import { MiniCourseNav } from './MiniCourseNav';
 import { MiniCourseInfo } from '../../lib/learningHubData';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/Card';
 import EnhancedCourseNav from './EnhancedCourseNav';
 import { Accordion } from '@/components/ui/accordion';
 

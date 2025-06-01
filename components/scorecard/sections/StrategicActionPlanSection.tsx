@@ -6,7 +6,7 @@ import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
 import Image from 'next/image';
 import { ChevronDownIcon, ChevronUpIcon, CheckCircleIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Accordion } from '@/components/ui/accordion';
 
 interface StrategicActionPlanSectionProps {

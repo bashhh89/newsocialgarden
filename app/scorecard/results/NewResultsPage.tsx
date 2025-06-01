@@ -10,7 +10,7 @@ import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { ToastProvider, useToast, Toaster } from '@/components/ui/toast-provider';
 import PresentationPDFButton from '@/components/ui/pdf-download/PresentationPDFButton';
 import SeekPDFButton from '@/components/ui/pdf-download/SeekPDFButton';

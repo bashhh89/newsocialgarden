@@ -8,7 +8,7 @@ import {
   CardTitle,
   CardDescription,
   CardFooter
-} from '@/components/ui/card';
+} from '@/components/ui/Card';
 import Link from 'next/link';
 
 export default function AIAnswerEngineRevolutionContent() {

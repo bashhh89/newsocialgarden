@@ -8,7 +8,7 @@ import {
   CardTitle,
   CardDescription,
   CardFooter
-} from '@/components/ui/card';
+} from '@/components/ui/Card';
 import { Accordion } from '@/components/ui/accordion';
 import MiniFloatingSidebar from '@/components/learning-hub/MiniFloatingSidebar';
 import ModuleNavigation from '@/components/learning-hub/ModuleNavigation';
