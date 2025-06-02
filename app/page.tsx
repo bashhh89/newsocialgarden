@@ -754,20 +754,28 @@ export default function Home() {
 
       // Prepare report data for Firestore
       const reportData = {
-        leadName: leadName || null,
-        leadEmail: sessionStorage.getItem('scorecardLeadEmail') || null,
-        leadCompany: sessionStorage.getItem('scorecardLeadCompany') || null,
-        leadPhone: sessionStorage.getItem('scorecardLeadPhone') || null,
-        industry: selectedIndustry || 'Unknown',
-        userAITier: data.userAITier || 'Unknown',
-        aiTier: data.userAITier || 'Unknown',
-        tier: data.userAITier || 'Unknown', // Add explicit tier field
+        leadName: leadName || 'User',
+        leadEmail: sessionStorage.getItem('scorecardLeadEmail') || '',
+        leadCompany: sessionStorage.getItem('scorecardLeadCompany') || '',
+        leadPhone: sessionStorage.getItem('scorecardLeadPhone') || '',
+        industry: selectedIndustry || 'General',
+        userAITier: data.userAITier || 'Enabler',
+        aiTier: data.userAITier || 'Enabler',
+        tier: data.userAITier || 'Enabler',
         reportMarkdown: data.reportMarkdown || '',
-        questionAnswerHistory: finalHistory.slice(0, MAX_QUESTIONS),
+        questionAnswerHistory: finalHistory.slice(0, MAX_QUESTIONS) || [],
         systemPromptUsed: data.systemPromptUsed || '',
+        finalScore: data.finalScore || 0,
         createdAt: serverTimestamp(),
         overallStatus: 'completed'
       };
+
+      // Remove any undefined or null values to prevent Firestore errors
+      Object.keys(reportData).forEach(key => {
+        if (reportData[key] === undefined || reportData[key] === null) {
+          reportData[key] = '';
+        }
+      });
 
       // Log the full reportData object before saving to Firestore
       console.log('>>> FRONTEND: FULL REPORT DATA OBJECT BEING SAVED TO FIRESTORE:');

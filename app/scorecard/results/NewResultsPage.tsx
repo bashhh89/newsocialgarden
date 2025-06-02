@@ -259,7 +259,76 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
         // CRITICAL FIX: Check if this is a local report ID and skip Firestore fetch
         if (fetchedReportId.startsWith('local-')) {
           console.log("RESULTS PAGE: Detected local report ID, loading from storage instead of Firestore");
-          throw new Error("Local report detected - loading from storage");
+          
+          // Instead of throwing an error, directly load from local storage
+          if (typeof window !== 'undefined') {
+            const localMarkdown = sessionStorage.getItem('reportMarkdown') || localStorage.getItem('reportMarkdown');
+            const localHistory = sessionStorage.getItem('questionAnswerHistory') || localStorage.getItem('questionAnswerHistory');
+            const localTier = sessionStorage.getItem('tier') || sessionStorage.getItem('userAITier') || sessionStorage.getItem('aiTier') || localStorage.getItem('tier') || localStorage.getItem('userAITier') || localStorage.getItem('aiTier');
+            const localUserName = sessionStorage.getItem('scorecardUserName') || sessionStorage.getItem('scorecardLeadName') || localStorage.getItem('scorecardUserName') || localStorage.getItem('scorecardLeadName');
+            const localIndustry = sessionStorage.getItem('industry') || localStorage.getItem('industry');
+            const localCompany = sessionStorage.getItem('scorecardLeadCompany') || localStorage.getItem('scorecardLeadCompany');
+            const localEmail = sessionStorage.getItem('scorecardLeadEmail') || localStorage.getItem('scorecardLeadEmail');
+            
+            if (localMarkdown) {
+              console.log("RESULTS PAGE: Successfully loaded local report data");
+              
+              // Parse question history
+              let questionAnswerHistoryValue = [];
+              if (localHistory) {
+                try {
+                  questionAnswerHistoryValue = JSON.parse(localHistory);
+                } catch (parseError) {
+                  console.error("Failed to parse question history from local storage:", parseError);
+                }
+              }
+              
+              // Clean up markdown
+              const cleanedReportMarkdown = localMarkdown.replace(/\*\*/g, '');
+              
+              // Extract tier from markdown if not in storage
+              let userTierValue = localTier;
+              if (!userTierValue || userTierValue === 'Unknown') {
+                userTierValue = extractTierFromMarkdown(cleanedReportMarkdown);
+              }
+              
+              // Set user name with fallback
+              const userNameValue = localUserName && localUserName !== 'User' ? localUserName : 'Customer';
+              
+              // Extract sections
+              const extractedStrengths = extractStrengthsFromMarkdown(cleanedReportMarkdown);
+              const extractedWeaknesses = extractWeaknessesFromMarkdown(cleanedReportMarkdown);
+              const extractedActions = extractActionsFromMarkdown(cleanedReportMarkdown);
+              
+              // Update all state
+              setReportMarkdown(cleanedReportMarkdown);
+              setQuestionAnswerHistory(questionAnswerHistoryValue);
+              setUserName(userNameValue);
+              setUserTier(userTierValue);
+              setUserIndustry(localIndustry || null);
+              setUserCompany(localCompany || null);
+              setUserEmail(localEmail || null);
+              setStrengths(extractedStrengths);
+              setWeaknesses(extractedWeaknesses);
+              setActionItems(extractedActions);
+              
+              // Check if we need lead capture
+              if (!localEmail || !localUserName) {
+                console.log('RESULTS PAGE: Local data loaded but no lead info found, showing lead form');
+                setShowLeadForm(true);
+              } else {
+                setLeadCaptured(true);
+              }
+              
+              setIsLoading(false);
+              return; // Successfully loaded from local storage
+            }
+          }
+          
+          // If no local data found, show error
+          setError("No local report data found. Please complete the assessment again.");
+          setIsLoading(false);
+          return;
         }
         
         // Fetch report data from Firestore
@@ -461,7 +530,7 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
               }
               
               // Set user name with fallback
-              let userNameValue = localUserName && localUserName !== 'User' ? localUserName : 'Customer';
+              const userNameValue = localUserName && localUserName !== 'User' ? localUserName : 'Customer';
               
               // Extract sections
               const extractedStrengths = extractStrengthsFromMarkdown(cleanedReportMarkdown);
