@@ -758,13 +758,13 @@ export default function Home() {
         leadEmail: sessionStorage.getItem('scorecardLeadEmail') || null,
         leadCompany: sessionStorage.getItem('scorecardLeadCompany') || null,
         leadPhone: sessionStorage.getItem('scorecardLeadPhone') || null,
-        industry: selectedIndustry,
+        industry: selectedIndustry || 'Unknown',
         userAITier: data.userAITier || 'Unknown',
         aiTier: data.userAITier || 'Unknown',
         tier: data.userAITier || 'Unknown', // Add explicit tier field
-        reportMarkdown: data.reportMarkdown,
+        reportMarkdown: data.reportMarkdown || '',
         questionAnswerHistory: finalHistory.slice(0, MAX_QUESTIONS),
-        systemPromptUsed: data.systemPromptUsed,
+        systemPromptUsed: data.systemPromptUsed || '',
         createdAt: serverTimestamp(),
         overallStatus: 'completed'
       };
@@ -839,7 +839,7 @@ export default function Home() {
 
         // CRITICAL FIX: Force immediate navigation to results page with reportId
         console.log(`FRONTEND: Attempting navigation to results page at: ${new Date().toISOString()}`);
-        console.log(`>>> FRONTEND: 🔴 Forcing navigation to /scorecard/results?reportId=${reportID}`);
+        console.log(`>>> FRONTEND: �� Forcing navigation to /scorecard/results?reportId=${reportID}`);
 
         // Add delay before navigation to ensure all state is properly saved
         setTimeout(() => {
@@ -862,7 +862,7 @@ export default function Home() {
         console.log('>>> FRONTEND: Attempting fallback navigation without reportId at:', new Date().toISOString());
 
         // Immediate fallback navigation WITH reportID from session storage
-        const fallbackReportId = sessionStorage.getItem('currentReportID') || sessionStorage.getItem('reportId') || reportID;
+        const fallbackReportId = sessionStorage.getItem('currentReportID') || sessionStorage.getItem('reportId') || 'fallback';
         console.log('>>> FRONTEND: Executing fallback navigation to /scorecard/results with reportId:', fallbackReportId);
         try {
           window.location.href = `/scorecard/results?reportId=${fallbackReportId}`;
