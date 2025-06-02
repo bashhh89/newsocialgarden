@@ -1525,16 +1525,46 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
                 
                 <div className="header-actions">
                   <div className="flex space-x-3">
-                    {/* PDF download buttons - hidden but preserved for functionality */}
-                    <div id="pdf-download-container" className="hidden">
-                      <PresentationPDFButton
-                        onGeneratePDF={handlePresentationPdf}
-                        isLoading={isPresentationPdfLoading}
-                        className="btn-primary-divine bg-[#20E28F] text-[#103138] hover:bg-[#20E28F]/90 hidden"
-                      />
+                    {/* Desktop Action Buttons - Restored for desktop visibility */}
+                    <div className="hidden md:flex space-x-3">
+                      {/* Share Report Button */}
+                      <button
+                        onClick={handleShareReport}
+                        className="flex items-center gap-2 bg-white text-[#103138] border border-[#103138] hover:bg-gray-50 transition-colors px-4 py-2 rounded-lg font-medium"
+                        disabled={isSharing}
+                      >
+                        {isSharing ? (
+                          <span className="flex items-center gap-2">
+                            <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span>Sharing...</span>
+                          </span>
+                        ) : (
+                          <>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                            </svg>
+                            Share Report
+                          </>
+                        )}
+                      </button>
+
+                      {/* Learning Hub Button */}
+                      <Link href={`/learning-hub${userTier ? `?tier=${userTier.toLowerCase()}` : ''}`} passHref>
+                        <button
+                          type="button"
+                          className="bg-[#20E28F] text-[#103138] hover:bg-[#20E28F]/90 transition-colors px-4 py-2 rounded-lg font-medium flex items-center gap-2"
+                        >
+                          Access Learning Hub
+                        </button>
+                      </Link>
+
+                      {/* Download PDF Button */}
                       <SeekPDFButton
                         scorecardData={{
-                          reportMarkdown: processedReportMarkdown, // Use processed markdown
+                          reportMarkdown: processedReportMarkdown,
                           questionAnswerHistory: questionAnswerHistory,
                           userName: userName,
                           userTier: userTier,
@@ -1545,13 +1575,24 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
                           finalScore: finalScore,
                           reportId: reportId,
                           userEmail: userEmail,
-                          userCompany: userCompany, // Include userCompany in scorecardData
+                          userCompany: userCompany,
                         }}
-                        className="hidden"
+                        className="bg-gradient-to-r from-[#20E28F] to-[#01CEFE] text-white font-medium py-2 px-4 rounded-lg shadow-md flex items-center gap-2 hover:from-[#1CC47E] hover:to-[#01B6D6] transition-all duration-200"
                       >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 4v12" />
+                        </svg>
                         Download Report
                       </SeekPDFButton>
-                      {/* WeasyPrint PDF button - Hidden but implementation preserved */}
+                    </div>
+
+                    {/* Hidden PDF buttons preserved for functionality */}
+                    <div id="pdf-download-container" className="hidden">
+                      <PresentationPDFButton
+                        onGeneratePDF={handlePresentationPdf}
+                        isLoading={isPresentationPdfLoading}
+                        className="btn-primary-divine bg-[#20E28F] text-[#103138] hover:bg-[#20E28F]/90 hidden"
+                      />
                       <WeasyprintPDFButton 
                         scorecardData={formatReportDataForPDF()}
                         className="btn-primary-divine bg-[#FEC401] text-[#103138] hover:bg-[#FEC401]/90 hidden"
