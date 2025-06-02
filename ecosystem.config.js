@@ -8,7 +8,14 @@ module.exports = {
       watch: false,
       env: {
         NODE_ENV: 'production',
-        PORT: 3006
+        PORT: 3006,
+        NEXT_PUBLIC_FIREBASE_API_KEY: 'AIzaSyAS9xP6FrtPxiwONibV562dpXa5lqjAJ2E',
+        NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: 'social-garden-94046.firebaseapp.com',
+        NEXT_PUBLIC_FIREBASE_PROJECT_ID: 'social-garden-94046',
+        NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: 'social-garden-94046.appspot.com',
+        NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: '794445598230',
+        NEXT_PUBLIC_FIREBASE_APP_ID: '1:794445598230:web:b614a432c0f96b49f86f37',
+        NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: 'G-HW572B7L9R'
       },
       // Health check integration
       exp_backoff_restart_delay: 100,
@@ -47,4 +54,4 @@ module.exports = {
       }
     }
   ]
-}; 
+};

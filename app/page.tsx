@@ -837,39 +837,67 @@ export default function Home() {
         // Hide the loading modal FIRST before navigation
         setIsGeneratingFinalReport(false);
 
-        // CRITICAL FIX: Force immediate navigation to results page with reportId
+        // CRITICAL FIX: Use Next.js router for more reliable navigation
         console.log(`FRONTEND: Attempting navigation to results page at: ${new Date().toISOString()}`);
-        console.log(`>>> FRONTEND: Forcing navigation to /scorecard/results?reportId=${reportID}`);
+        console.log(`>>> FRONTEND: Using router.push to /scorecard/results?reportId=${reportID}`);
 
-        // Add delay before navigation to ensure all state is properly saved
-        setTimeout(() => {
-          console.log(`>>> FRONTEND: Executing delayed navigation to /scorecard/results?reportId=${reportID}`);
-          // Use Next.js router if available, fallback to direct location change
-          try {
-            window.location.href = `/scorecard/results?reportId=${reportID}`;
-          } catch (navError) {
-            console.error('Navigation failed, trying alternate method:', navError);
-            window.open(`/scorecard/results?reportId=${reportID}`, '_self');
-          }
-        }, 1000); // 1 second delay to ensure storage operations complete
+        // Use router.push for immediate navigation
+        router.push(`/scorecard/results?reportId=${reportID}`);
       } catch (firestoreError) {
         console.error(`FRONTEND: Error saving report to Firestore at: ${new Date().toISOString()}`, firestoreError);
-        // Even if Firestore save fails, we should attempt to navigate with session data
+        
+        // CRITICAL FIX: Generate a proper fallback report ID and store data locally
+        const fallbackReportId = `local-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        console.log('>>> FRONTEND: Firestore save failed, creating local report with ID:', fallbackReportId);
+        
+        // Store all the report data locally with the proper fallback ID
+        sessionStorage.setItem('reportMarkdown', data.reportMarkdown);
+        sessionStorage.setItem('questionAnswerHistory', JSON.stringify(finalHistory.slice(0, MAX_QUESTIONS)));
+        sessionStorage.setItem('systemPromptUsed', data.systemPromptUsed);
+        sessionStorage.setItem('reportId', fallbackReportId);
+        sessionStorage.setItem('currentReportID', fallbackReportId);
+        sessionStorage.setItem('userAITier', data.userAITier || 'Unknown');
+        sessionStorage.setItem('aiTier', data.userAITier || 'Unknown');
+        sessionStorage.setItem('tier', data.userAITier || 'Unknown');
+        sessionStorage.setItem('userTier', data.userAITier || 'Unknown');
+        sessionStorage.setItem('finalScore', data.finalScore || '');
+        sessionStorage.setItem('industry', selectedIndustry || '');
+        
+        // Create and store consolidated userData object
+        const userData = {
+          leadName: leadName || '',
+          name: leadName || '',
+          companyName: sessionStorage.getItem('scorecardLeadCompany') || '',
+          email: sessionStorage.getItem('scorecardLeadEmail') || '',
+          phone: sessionStorage.getItem('scorecardLeadPhone') || '',
+          industry: selectedIndustry || '',
+          tier: data.userAITier || 'Unknown',
+        };
+        sessionStorage.setItem('userData', JSON.stringify(userData));
+        
+        // Also store in localStorage as backup
+        localStorage.setItem('reportMarkdown', data.reportMarkdown);
+        localStorage.setItem('questionAnswerHistory', JSON.stringify(finalHistory.slice(0, MAX_QUESTIONS)));
+        localStorage.setItem('systemPromptUsed', data.systemPromptUsed);
+        localStorage.setItem('reportId', fallbackReportId);
+        localStorage.setItem('currentReportID', fallbackReportId);
+        localStorage.setItem('userAITier', data.userAITier || 'Unknown');
+        localStorage.setItem('aiTier', data.userAITier || 'Unknown');
+        localStorage.setItem('tier', data.userAITier || 'Unknown');
+        localStorage.setItem('userTier', data.userAITier || 'Unknown');
+        localStorage.setItem('finalScore', data.finalScore || '');
+        localStorage.setItem('industry', selectedIndustry || '');
+        localStorage.setItem('userData', JSON.stringify(userData));
+        
+        console.log('>>> FRONTEND: Successfully stored report data locally with fallback ID:', fallbackReportId);
+        
+        // Clear loading state and timeout
         setIsGeneratingFinalReport(false);
         clearTimeout(safetyTimeout);
-
-        // Try to navigate to results without a reportId, relying on session data
-        console.log('>>> FRONTEND: Attempting fallback navigation without reportId at:', new Date().toISOString());
-
-        // Immediate fallback navigation WITH reportID from session storage
-        const fallbackReportId = sessionStorage.getItem('currentReportID') || sessionStorage.getItem('reportId') || 'fallback';
-        console.log('>>> FRONTEND: Executing fallback navigation to /scorecard/results with reportId:', fallbackReportId);
-        try {
-          window.location.href = `/scorecard/results?reportId=${fallbackReportId}`;
-        } catch (navError) {
-          console.error('Fallback navigation failed, trying alternate method:', navError);
-          window.location.replace(`/scorecard/results?reportId=${fallbackReportId}`);
-        }
+        
+        // Navigate to results with the proper fallback ID
+        console.log('>>> FRONTEND: Navigating to results with fallback ID:', fallbackReportId);
+        router.push(`/scorecard/results?reportId=${fallbackReportId}`);
       }
     } catch (error) {
       console.error(`FRONTEND: Error in generateReport at: ${new Date().toISOString()}`, error);
@@ -879,13 +907,16 @@ export default function Home() {
     
     // At the very end of generateReport (even if error or success)
     console.log(`FRONTEND: generateReport function ended at: ${new Date().toISOString()}. Total duration: ${(Date.now() - startTime) / 1000}s`);
-  }, [selectedIndustry, leadName, MAX_QUESTIONS]);
+  }, [selectedIndustry, leadName, MAX_QUESTIONS, router]);
 
   // Modified lead capture success handler
   const handleLeadCaptureSuccess = useCallback((capturedName: string) => {
     console.log("Frontend: Lead capture successful. Captured name:", capturedName);
     
-    // Set loading state for report generation first
+    // CRITICAL FIX: Set current step to results IMMEDIATELY to prevent showing questions
+    setCurrentStep('results');
+    
+    // Set loading state for report generation
     setIsGeneratingFinalReport(true);
     
     // Update lead capture state
@@ -902,11 +933,15 @@ export default function Home() {
     // Use the current history to generate the report
     const currentHistory = scorecardState.history;
     
+    // Update state to completed before generating report
+    setScorecardState(prev => ({
+      ...prev,
+      overall_status: 'completed',
+      currentQuestionNumber: MAX_QUESTIONS
+    }));
+    
     // Generate the report with exactly MAX_QUESTIONS answers or current answers if fewer
     generateReport(currentHistory.slice(0, MAX_QUESTIONS));
-    
-    // Set the current step to results to ensure proper navigation
-    setCurrentStep('results');
   }, [setLeadCaptured, setLeadName, scorecardState.history, MAX_QUESTIONS, setIsGeneratingFinalReport, generateReport, setCurrentStep]);
 
   const handlePostAssessmentLeadCaptureSuccess = useCallback(() => {

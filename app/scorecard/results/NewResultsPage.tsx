@@ -256,6 +256,12 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
         
         console.log("RESULTS PAGE: Attempting to fetch report from Firestore with ID:", fetchedReportId);
         
+        // CRITICAL FIX: Check if this is a local report ID and skip Firestore fetch
+        if (fetchedReportId.startsWith('local-')) {
+          console.log("RESULTS PAGE: Detected local report ID, loading from storage instead of Firestore");
+          throw new Error("Local report detected - loading from storage");
+        }
+        
         // Fetch report data from Firestore
         const reportRef = doc(db, 'scorecardReports', fetchedReportId);
         const reportSnapshot = await getDoc(reportRef);
