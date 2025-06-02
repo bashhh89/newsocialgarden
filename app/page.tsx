@@ -861,13 +861,14 @@ export default function Home() {
         // Try to navigate to results without a reportId, relying on session data
         console.log('>>> FRONTEND: Attempting fallback navigation without reportId at:', new Date().toISOString());
 
-        // Immediate fallback navigation
-        console.log('>>> FRONTEND: Executing immediate fallback navigation to /scorecard/results');
+        // Immediate fallback navigation WITH reportID from session storage
+        const fallbackReportId = sessionStorage.getItem('currentReportID') || sessionStorage.getItem('reportId') || reportID;
+        console.log('>>> FRONTEND: Executing fallback navigation to /scorecard/results with reportId:', fallbackReportId);
         try {
-          window.location.href = `/scorecard/results`;
+          window.location.href = `/scorecard/results?reportId=${fallbackReportId}`;
         } catch (navError) {
           console.error('Fallback navigation failed, trying alternate method:', navError);
-          window.location.replace(`/scorecard/results`);
+          window.location.replace(`/scorecard/results?reportId=${fallbackReportId}`);
         }
       }
     } catch (error) {

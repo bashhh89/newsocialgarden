@@ -49,7 +49,7 @@ const colors = {
 };
 
 // Define SectionName type
-type SectionName = 'Overall Tier' | 'Key Findings' | 'Recommendations' | 'Strategic Action Plan' | 'Detailed Analysis' | 'Benchmarks' | 'Assessment Q&A' | 'Learning Path';
+type SectionName = 'Key Findings' | 'Recommendations' | 'Strategic Action Plan' | 'Detailed Analysis' | 'Benchmarks' | 'Assessment Q&A' | 'Learning Path';
 
 // Define SectionRefs interface with correct syntax
 interface SectionRefs {
@@ -62,7 +62,7 @@ interface NewResultsPageProps {
 
 export default function NewResultsPage({ initialUserName }: NewResultsPageProps = {}) {
   // State variables
-  const [activeTab, setActiveTab] = useState('Overall Tier');
+  const [activeTab, setActiveTab] = useState('Key Findings'); // Updated default tab
   const [reportMarkdown, setReportMarkdown] = useState<string | null>(null);
   const [questionAnswerHistory, setQuestionAnswerHistory] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -76,28 +76,37 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
   const [weaknesses, setWeaknesses] = useState<string[]>([]);
   const [actionItems, setActionItems] = useState<string[]>([]);
   const [isSharing, setIsSharing] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const [isPresentationPdfLoading, setIsPresentationPdfLoading] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);    
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [finalScore, setFinalScore] = useState<number | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userCompany, setUserCompany] = useState<string | null>(null); // Add state for company name
   const [processedReportMarkdown, setProcessedReportMarkdown] = useState<string | null>(null);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showLeadForm, setShowLeadForm] = useState(false);      
+  const [leadCaptured, setLeadCaptured] = useState(false);
+
+  // Initialize toast hook
+  const { toast } = useToast();
+
+  // Refs for scroll animations
+  const contentRef = useRef<HTMLDivElement>(null);
+  const overallTierRef = useRef<HTMLDivElement>(null);
+  const keyFindingsRef = useRef<HTMLDivElement>(null);
+  const recommendationsRef = useRef<HTMLDivElement>(null);      
+  const strategicActionPlanRef = useRef<HTMLDivElement>(null);  
+  const detailedAnalysisRef = useRef<HTMLDivElement>(null);     
+  const benchmarksRef = useRef<HTMLDivElement>(null);
+  const qAndARef = useRef<HTMLDivElement>(null);
+  const learningPathRef = useRef<HTMLDivElement>(null);
+
+  // Important: Make this safe for SSG by checking if window is defined
+  const searchParams = useSearchParams();
   
   // Navigation items for both desktop and mobile
   const navigationItems = [
-    {
-      id: 'Overall Tier',
-      label: 'Overall Tier',
-      icon: (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2L20 7V17L12 22L4 17V7L12 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M12 22V12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M20 7L12 12L4 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      )
-    },
     {
       id: 'Key Findings',
       label: 'Key Findings',
@@ -177,26 +186,7 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
         console.log("RESULTS PAGE: FinalScore is already set (likely from Firestore or previous calculation), not recalculating from history. Current score:", finalScore);
     }
   }, [questionAnswerHistory, finalScore]); // Add finalScore to dependency array
-  const [showLeadForm, setShowLeadForm] = useState(false);
-  const [leadCaptured, setLeadCaptured] = useState(false);
-  
-  // Initialize toast hook
-  const { toast } = useToast();
-  
-  // Refs for scroll animations
-  const contentRef = useRef<HTMLDivElement>(null);
-  const overallTierRef = useRef<HTMLDivElement>(null);
-  const keyFindingsRef = useRef<HTMLDivElement>(null);
-  const recommendationsRef = useRef<HTMLDivElement>(null);
-  const strategicActionPlanRef = useRef<HTMLDivElement>(null);
-  const detailedAnalysisRef = useRef<HTMLDivElement>(null);
-  const benchmarksRef = useRef<HTMLDivElement>(null);
-  const qAndARef = useRef<HTMLDivElement>(null);
-  const learningPathRef = useRef<HTMLDivElement>(null);
 
-  // Important: Make this safe for SSG by checking if window is defined
-  const searchParams = useSearchParams();
-  
   // Data fetching - Protect for SSG environment
   useEffect(() => {
     if (reportMarkdown && finalScore !== null) {
@@ -428,7 +418,98 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
         }
       } catch (error) {
         console.error("RESULTS PAGE ERROR:", error);
-        setError(error instanceof Error ? error.message : 'Failed to load report');
+        
+        // FALLBACK: Try to load data from local storage
+        console.log("RESULTS PAGE: Attempting fallback to local storage data...");
+        
+        try {
+          if (typeof window !== 'undefined') {
+            const localMarkdown = sessionStorage.getItem('reportMarkdown') || localStorage.getItem('reportMarkdown');
+            const localHistory = sessionStorage.getItem('questionAnswerHistory') || localStorage.getItem('questionAnswerHistory');
+            const localTier = sessionStorage.getItem('tier') || sessionStorage.getItem('userAITier') || sessionStorage.getItem('aiTier') || localStorage.getItem('tier') || localStorage.getItem('userAITier') || localStorage.getItem('aiTier');
+            const localUserName = sessionStorage.getItem('scorecardUserName') || sessionStorage.getItem('scorecardLeadName') || localStorage.getItem('scorecardUserName') || localStorage.getItem('scorecardLeadName');
+            const localIndustry = sessionStorage.getItem('industry') || localStorage.getItem('industry');
+            const localCompany = sessionStorage.getItem('scorecardLeadCompany') || localStorage.getItem('scorecardLeadCompany');
+            const localEmail = sessionStorage.getItem('scorecardLeadEmail') || localStorage.getItem('scorecardLeadEmail');
+            
+            if (localMarkdown) {
+              console.log("RESULTS PAGE: Successfully loaded data from local storage");
+              
+              // Parse question history
+              let questionAnswerHistoryValue = [];
+              if (localHistory) {
+                try {
+                  questionAnswerHistoryValue = JSON.parse(localHistory);
+                } catch (parseError) {
+                  console.error("Failed to parse question history from local storage:", parseError);
+                }
+              }
+              
+              // Clean up markdown
+              const cleanedReportMarkdown = localMarkdown.replace(/\*\*/g, '');
+              
+              // Extract tier from markdown if not in storage
+              let userTierValue = localTier;
+              if (!userTierValue || userTierValue === 'Unknown') {
+                userTierValue = extractTierFromMarkdown(cleanedReportMarkdown);
+              }
+              
+              // Set user name with fallback
+              let userNameValue = localUserName && localUserName !== 'User' ? localUserName : 'Customer';
+              
+              // Extract sections
+              const extractedStrengths = extractStrengthsFromMarkdown(cleanedReportMarkdown);
+              const extractedWeaknesses = extractWeaknessesFromMarkdown(cleanedReportMarkdown);
+              const extractedActions = extractActionsFromMarkdown(cleanedReportMarkdown);
+              
+              // Update all state
+              setReportMarkdown(cleanedReportMarkdown);
+              setQuestionAnswerHistory(questionAnswerHistoryValue);
+              setUserName(userNameValue);
+              setUserTier(userTierValue);
+              setUserIndustry(localIndustry || null);
+              setUserCompany(localCompany || null);
+              setUserEmail(localEmail || null);
+              setStrengths(extractedStrengths);
+              setWeaknesses(extractedWeaknesses);
+              setActionItems(extractedActions);
+              
+              // Check if we need lead capture
+              if (!localEmail || !localUserName) {
+                console.log('RESULTS PAGE: Local data loaded but no lead info found, showing lead form');
+                setShowLeadForm(true);
+              } else {
+                setLeadCaptured(true);
+              }
+              
+              // Clear the error since we successfully loaded from local storage
+              setError(null);
+              return; // Successfully loaded from local storage
+            }
+          }
+          
+          // If local storage fallback also fails
+          console.error("RESULTS PAGE: No data available in local storage either");
+          setError("No scorecard results found. Please complete the AI Efficiency Scorecard first.");
+          
+          // Redirect to home page after a delay
+          if (typeof window !== 'undefined') {
+            setTimeout(() => {
+              window.location.href = '/';
+            }, 3000);
+          }
+          
+        } catch (fallbackError) {
+          console.error("RESULTS PAGE: Fallback to local storage failed:", fallbackError);
+          setError("Failed to load scorecard results. Please try completing the scorecard again.");
+          
+          // Redirect to home page after a delay
+          if (typeof window !== 'undefined') {
+            setTimeout(() => {
+              window.location.href = '/';
+            }, 3000);
+          }
+        }
       } finally {
         setIsLoading(false);
       }
@@ -778,36 +859,17 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
     return [];
   };
 
-  // Enhanced tab change handler that closes mobile menu
+  // Enhanced tab change handler
   const handleTabChange = (tabName: SectionName) => {
-    if (animating) return;
+    if (activeTab === tabName) return;
     
+    // Set to fade out
     setAnimating(true);
-    setIsMobileMenuOpen(false); // Close mobile menu on tab change
+    setActiveTab(tabName);
     
+    // After a brief delay, fade back in with new content
     setTimeout(() => {
-      setActiveTab(tabName);
       setAnimating(false);
-      
-      // Scroll section into view if it exists
-      const sectionRefs: SectionRefs = {
-        'Overall Tier': overallTierRef,
-        'Key Findings': keyFindingsRef,
-        'Recommendations': recommendationsRef,
-        'Strategic Action Plan': strategicActionPlanRef,
-        'Detailed Analysis': detailedAnalysisRef,
-        'Benchmarks': benchmarksRef,
-        'Assessment Q&A': qAndARef,
-        'Learning Path': learningPathRef
-      };
-      
-      const targetRef = sectionRefs[tabName];
-      if (targetRef?.current) {
-        targetRef.current.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start' 
-        });
-      }
     }, 150);
   };
 
@@ -1304,47 +1366,24 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
     };
   };
 
+  // Loading state
   if (isLoading) {
     return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center bg-white">
-        <div className="w-24 h-24 mb-8 border-4 border-sg-bright-green/30 border-t-sg-bright-green rounded-full animate-spin"></div>
-        <h2 className="text-2xl font-bold mb-3 text-sg-dark-teal">Loading Your AI Scorecard</h2>
-        <p className="text-sg-dark-teal/70 text-center max-w-md">
-          Please wait while we prepare your results. This may take a few moments...
-        </p>
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader />
       </div>
     );
   }
 
+  // Error state
   if (error) {
     return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center bg-white p-6">
-        <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg max-w-lg w-full mb-6">
-          <h2 className="text-2xl font-bold mb-3 text-blue-700">Complete Your AI Scorecard First</h2>
-          <p className="text-blue-600 mb-4">{error}</p>
-          <p className="text-sg-dark-teal/70 mb-6">
-            To view your personalized AI efficiency results, you need to:
-            <ul className="list-disc pl-6 mt-2">
-              <li>Complete the AI Efficiency Scorecard assessment</li>
-              <li>Answer questions about your current AI usage</li>
-              <li>Get your personalized tier and recommendations</li>
-            </ul>
-          </p>
-          <div className="flex space-x-4">
-            <button 
-              onClick={() => window.location.href = '/'}  
-              className="px-6 py-3 bg-sg-bright-green text-white font-semibold rounded-lg shadow-sm hover:brightness-105 transition-all"
-            >
-              Start AI Scorecard
-            </button>
-            <button 
-              onClick={() => window.location.reload()} 
-              className="px-6 py-3 bg-sg-dark-teal text-white font-semibold rounded-lg shadow-sm hover:brightness-105 transition-all"
-            >
-              Retry Loading
-            </button>
-          </div>
-        </div>
+      <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
+        <h1 className="text-2xl font-bold text-red-600 mb-4">Error Loading Report</h1>
+        <p className="mb-6 text-gray-700">{error}</p>
+        <Link href="/" className="px-4 py-2 bg-[#20E28F] text-[#103138] rounded-lg font-medium hover:bg-[#20E28F]/90 transition-colors">
+          Return to Home
+        </Link>
       </div>
     );
   }
@@ -1367,84 +1406,52 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
   return (
     <>
       <Toaster />
-      <div className="bg-white min-h-screen">
+      <div className={`bg-white min-h-screen ${isMobileMenuOpen ? 'mobile-menu-open' : ''}`}>
         {reportMarkdown ? (
           <>
             {/* Header */}
             <header className="header">
               <div className="header-content">
-                <div className="flex items-center gap-3 flex-1">
-                  <div className="logo-container">
-                    {/* Social Garden Logo */}
-                    <Image 
-                      src="/footer-logo.svg" 
-                      alt="AI Efficiency Scorecard Logo" 
-                      width={120} 
-                      height={24} 
-                      className="logo-inner"
-                      priority
-                    />
-                  </div>
-                  <h1>AI Efficiency Scorecard</h1>
-                </div>
-                
-                {/* Mobile menu button - only visible on mobile */}
-                <button
+                {/* Menu at the extreme left edge */}
+                <button 
+                  className="md:hidden flex items-center justify-center w-12 h-12 hover:bg-gray-100 transition-colors"
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="md:hidden flex items-center justify-center w-10 h-10 rounded-lg bg-[#103138] text-white hover:bg-[#103138]/90 transition-colors flex-shrink-0"
-                  aria-label="Toggle navigation menu"
+                  aria-label="Toggle mobile menu"
+                  style={{ marginLeft: '-16px', position: 'absolute', left: '0' }}
                 >
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
+                  <svg 
+                    className="w-7 h-7 text-[#103138]" 
+                    fill="none" 
+                    stroke="currentColor" 
                     viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
                   >
-                    {isMobileMenuOpen ? (
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    ) : (
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                    )}
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={2} 
+                      d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} 
+                    />
                   </svg>
                 </button>
-
-                <div className="header-actions hidden md:flex">
+                
+                {/* Logo */}
+                <div className="logo-container mx-auto">
+                  <Image 
+                    src="/footer-logo.svg" 
+                    alt="AI Efficiency Scorecard Logo" 
+                    width={120} 
+                    height={24} 
+                    className="logo-inner"
+                    priority
+                  />
+                </div>
+                
+                <div className="flex-1"></div>
+                
+                <div className="header-actions">
                   <div className="flex space-x-3">
-                    <button
-                      onClick={handleShareReport}
-                      className="flex items-center gap-2 bg-white text-[#103138] border border-[#103138] hover:bg-gray-50 transition-colors px-4 py-2 rounded-md font-medium mx-2"
-                      disabled={isSharing}
-                    >
-                      {isSharing ? (
-                        <span className="flex items-center justify-center gap-2">
-                          <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          <span>Sharing...</span>
-                        </span>
-                      ) : (
-                        <>
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                          </svg>
-                          Share Report
-                        </>
-                      )}
-                    </button>
-
-                    <Link href={`/learning-hub${userTier ? `?tier=${userTier.toLowerCase()}` : ''}`} passHref>
-                      <button
-                        type="button"
-                        className="sg-button-primary flex items-center justify-center"
-                      >
-                        Access Learning Hub
-                      </button>
-                    </Link>
-
-                    {/* PDF download button */}
-                    <div id="pdf-download-container" className="flex gap-4">
+                    {/* PDF download buttons - hidden but preserved for functionality */}
+                    <div id="pdf-download-container" className="hidden">
                       <PresentationPDFButton
                         onGeneratePDF={handlePresentationPdf}
                         isLoading={isPresentationPdfLoading}
@@ -1465,10 +1472,8 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
                           userEmail: userEmail,
                           userCompany: userCompany, // Include userCompany in scorecardData
                         }}
-                        className="bg-gradient-to-r from-[#20E28F] to-[#01CEFE] text-white font-bold py-3 px-7 rounded-xl shadow-lg flex items-center gap-2 hover:from-[#1CC47E] hover:to-[#01B6D6] transition-all duration-200 border-2 border-[#20E28F] focus:outline-none focus:ring-2 focus:ring-[#20E28F]/50"
+                        className="hidden"
                       >
-                        {/* Download icon */}
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 4v12" /></svg>
                         Download Report
                       </SeekPDFButton>
                       {/* WeasyPrint PDF button - Hidden but implementation preserved */}
@@ -1484,118 +1489,143 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
               </div>
             </header>
 
-            {/* Mobile Navigation Menu - Only visible when menu is open */}
+            {/* Mobile Menu Overlay */}
             {isMobileMenuOpen && (
-              <>
-                {/* Overlay to close menu when clicking outside */}
+              <div className="fixed inset-0 z-50 md:hidden">
+                {/* Backdrop */}
                 <div 
-                  className="md:hidden fixed inset-0 bg-black bg-opacity-25 z-40"
+                  className="fixed inset-0 bg-black bg-opacity-50"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  aria-hidden="true"
-                />
+                ></div>
                 
-                <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-gray-200 shadow-lg z-50 max-h-[90vh] overflow-y-auto">
-                  <nav className="px-4 py-6">
-                    <div className="space-y-1">
-                      {navigationItems.map((item) => (
+                {/* Menu Content - Changed from right to left side */}
+                <div className="fixed top-0 left-0 h-full w-80 max-w-sm bg-white shadow-xl overflow-y-auto">
+                  {/* Menu Header */}
+                  <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                    <h2 className="text-lg font-semibold text-[#103138]">Menu</h2>
+                    <button 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-gray-100 transition-colors"
+                      aria-label="Close menu"
+                    >
+                      <svg className="w-5 h-5 text-[#103138]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  
+                  {/* User Info */}
+                  {userName && (
+                    <div className="p-4 bg-[#F3FDF5] border-b border-gray-200">
+                      <div className="text-sm text-[#103138] opacity-75">Report for</div>
+                      <div className="font-semibold text-[#103138]">{userName}</div>
+                      {userTier && (
+                        <div className="mt-2">
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[#20E28F] text-[#103138]">
+                            {userTier} Tier
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
+                  {/* Navigation Items */}
+                  <div className="p-4">
+                    <h3 className="text-sm font-semibold text-[#103138] uppercase tracking-wider mb-3">Navigate Report</h3>
+                    <nav className="space-y-1">
+                      {navigationItems.map(item => (
                         <button
                           key={item.id}
                           onClick={() => {
                             handleTabChange(item.id as SectionName);
                             setIsMobileMenuOpen(false);
                           }}
-                          className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                            activeTab === item.id
-                              ? 'bg-[#F3FDF5] text-[#20E28F] border-l-4 border-[#20E28F]'
-                              : 'text-[#103138] hover:bg-gray-50'
+                          className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                            activeTab === item.id 
+                              ? 'bg-[#20E28F] text-white' 
+                              : 'text-[#103138] hover:bg-gray-100'
                           }`}
                         >
-                          <span className={`${activeTab === item.id ? 'text-[#20E28F]' : 'text-[#103138]/60'}`}>
+                          <span className={activeTab === item.id ? 'text-white' : 'text-[#20E28F]'}>
                             {item.icon}
                           </span>
-                          <span className="font-medium text-sm">
-                            {item.label}
-                          </span>
-                          {activeTab === item.id && (
-                            <svg className="ml-auto h-4 w-4 text-[#20E28F]" viewBox="0 0 20 20" fill="currentColor">
-                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-8-8a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                            </svg>
-                          )}
+                          <span className="text-sm font-medium">{item.label}</span>
                         </button>
                       ))}
-                    </div>
+                    </nav>
+                  </div>
+                  
+                  {/* Action Buttons */}
+                  <div className="p-4 border-t border-gray-200 space-y-3">
+                    <h3 className="text-sm font-semibold text-[#103138] uppercase tracking-wider mb-3">Actions</h3>
                     
-                    {/* Mobile Action Buttons */}
-                    <div className="border-t border-gray-200 mt-6 pt-6 pb-8">
-                      <div className="space-y-3">
-                        <button
-                          onClick={() => {
-                            handleShareReport();
-                            setIsMobileMenuOpen(false);
-                          }}
-                          className="w-full flex items-center gap-3 bg-white text-[#103138] border border-[#103138] hover:bg-gray-50 transition-colors px-4 py-3 rounded-lg font-medium"
-                          disabled={isSharing}
-                        >
-                          {isSharing ? (
-                            <span className="flex items-center justify-center gap-2">
-                              <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                              </svg>
-                              <span>Sharing...</span>
-                            </span>
-                          ) : (
-                            <>
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                              </svg>
-                              Share Report
-                            </>
-                          )}
-                        </button>
+                    {/* Share Report Button */}
+                    <button
+                      onClick={() => {
+                        handleShareReport();
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="w-full flex items-center justify-center gap-2 bg-white text-[#103138] border border-[#103138] hover:bg-gray-50 transition-colors px-4 py-3 rounded-lg font-medium"
+                      disabled={isSharing}
+                    >
+                      {isSharing ? (
+                        <span className="flex items-center justify-center gap-2">
+                          <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          <span>Sharing...</span>
+                        </span>
+                      ) : (
+                        <>
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                          </svg>
+                          Share Report
+                        </>
+                      )}
+                    </button>
 
-                        <Link href={`/learning-hub${userTier ? `?tier=${userTier.toLowerCase()}` : ''}`} passHref>
-                          <button
-                            type="button"
-                            className="w-full sg-button-primary flex items-center justify-center gap-3 px-4 py-3 rounded-lg"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                            </svg>
-                            Access Learning Hub
-                          </button>
-                        </Link>
+                    {/* Learning Hub Button */}
+                    <Link href={`/learning-hub${userTier ? `?tier=${userTier.toLowerCase()}` : ''}`} passHref>
+                      <button
+                        type="button"
+                        className="w-full sg-button-primary flex items-center justify-center"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Access Learning Hub
+                      </button>
+                    </Link>
 
-                        <div onClick={() => setIsMobileMenuOpen(false)}>
-                          <SeekPDFButton
-                            scorecardData={{
-                              reportMarkdown: processedReportMarkdown,
-                              questionAnswerHistory: questionAnswerHistory,
-                              userName: userName,
-                              userTier: userTier,
-                              userIndustry: userIndustry,
-                              strengths: strengths,
-                              weaknesses: weaknesses,
-                              actionItems: actionItems,
-                              finalScore: finalScore,
-                              reportId: reportId,
-                              userEmail: userEmail,
-                              userCompany: userCompany,
-                            }}
-                            className="w-full bg-gradient-to-r from-[#20E28F] to-[#01CEFE] text-white font-bold py-3 px-4 rounded-lg shadow-lg flex items-center justify-center gap-2 hover:from-[#1CC47E] hover:to-[#01B6D6] transition-all duration-200"
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 4v12" />
-                            </svg>
-                            Download Report
-                          </SeekPDFButton>
-                        </div>
-                      </div>
+                    {/* Download PDF Button */}
+                    <div className="w-full">
+                      <SeekPDFButton
+                        scorecardData={{
+                          reportMarkdown: processedReportMarkdown,
+                          questionAnswerHistory: questionAnswerHistory,
+                          userName: userName,
+                          userTier: userTier,
+                          userIndustry: userIndustry,
+                          strengths: strengths,
+                          weaknesses: weaknesses,
+                          actionItems: actionItems,
+                          finalScore: finalScore,
+                          reportId: reportId,
+                          userEmail: userEmail,
+                          userCompany: userCompany,
+                        }}
+                        className="w-full bg-gradient-to-r from-[#20E28F] to-[#01CEFE] text-white font-bold py-3 px-4 rounded-lg shadow-lg flex items-center justify-center gap-2 hover:from-[#1CC47E] hover:to-[#01B6D6] transition-all duration-200 border-2 border-[#20E28F] focus:outline-none focus:ring-2 focus:ring-[#20E28F]/50"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 4v12" />
+                        </svg>
+                        Download Report
+                      </SeekPDFButton>
                     </div>
-                  </nav>
+                  </div>
                 </div>
-              </>
+              </div>
             )}
 
             {/* Main Content - add ID for PDF capture */}
@@ -1663,94 +1693,7 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
                 </div>
 
                 {/* Content based on active tab - maintaining exact existing content */}
-                {/* Overall Tier Section */}
-                {activeTab === 'Overall Tier' && (
-                  <div ref={overallTierRef} className="section-content">
-                    <div className="space-y-6">
-                      <h2 className="text-xl font-bold text-[#103138] mb-4 flex items-center">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-3 text-[#20E28F]">
-                          <path d="M12 2L20 7V17L12 22L4 17V7L12 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M12 22V12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                          <path d="M20 7L12 12L4 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                        Overall AI Maturity Assessment
-                      </h2>
-                      
-                      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div className="px-6 pt-6">
-                          <div className="flex flex-col md:flex-row md:items-center mb-5">
-                            <div className="flex items-center mb-4 md:mb-0 md:mr-8">
-                              <div 
-                                className={`w-14 h-14 rounded-full border-4 flex items-center justify-center mr-4 ${
-                                  userTier === 'Leader' ? 'border-[#20E28F] bg-[#F3FDF5]' : 
-                                  userTier === 'Enabler' ? 'border-orange-500 bg-orange-50' : 
-                                  'border-blue-400 bg-blue-50'
-                                }`}
-                              >
-                                <span 
-                                  className={`text-lg font-bold ${
-                                    userTier === 'Leader' ? 'text-[#20E28F]' : 
-                                    userTier === 'Enabler' ? 'text-orange-500' : 
-                                    'text-blue-400'
-                                  }`}
-                                >
-                                  {userTier?.[0] || '?'}
-                                </span>
-                              </div>
-                              <div>
-                                <h3 className="text-2xl font-bold text-[#103138]">{userTier || 'Unknown'}</h3>
-                                <p className="text-[#103138]/70 text-sm">AI Maturity Tier</p>
-                              </div>
-                            </div>
-                            
-                            <div className="w-full md:w-3/5">
-                              <div className="relative h-8 bg-gray-100 rounded-full overflow-hidden">
-                                <div 
-                                  className={`tier-progress-fill ${ 
-                                    userTier === 'Leader' ? 'w-full bg-gradient-to-r from-[#20E28F] to-[#5de4b1]' : 
-                                    userTier === 'Enabler' ? 'w-2/3 bg-gradient-to-r from-orange-400 to-orange-300' : 
-                                    userTier === 'Dabbler' ? 'w-1/3 bg-gradient-to-r from-[#01CEFE] to-[#01CEFE]/80' : 
-                                    'w-0'
-                                  }`}
-                                  // Removed the incorrect style attribute since className now handles width and color
-                                ></div>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="p-6 bg-[#F3FDF5]/40 rounded-lg border border-[#20E28F]/10 mb-6">
-                            <h4 className="font-semibold text-lg text-[#103138] mb-3 flex items-center">
-                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2 text-[#20E28F]">
-                                <path d="M9 10.5L11 12.5L15.5 8M7 18V20.3355C7 20.8684 7 21.1348 7.10923 21.2716C7.20422 21.3906 7.34827 21.4599 7.50054 21.4597C7.67563 21.4595 7.88367 21.2931 8.29976 20.9602L10.6852 19.0518C11.1725 18.662 11.4162 18.4671 11.6875 18.3285C11.9282 18.2055 12.1844 18.1156 12.4492 18.0613C12.7477 18 13.0597 18 13.6837 18H16.2C17.8802 18 18.7202 18 19.362 17.673C19.9265 17.3854 20.3854 16.9265 20.673 16.362C21 15.7202 21 14.8802 21 13.2V7.8C21 6.11984 21 5.27976 20.673 4.63803C20.3854 4.07354 19.9265 3.6146 19.362 3.32698C18.7202 3 17.8802 3 16.2 3H7.8C6.11984 3 5.27976 3 4.63803 3.32698C4.07354 3.6146 3.6146 4.07354 3.32698 4.63803C3 5.27976 3 6.11984 3 7.8V14C3 14.93 3 15.395 3.10222 15.7765C3.37962 16.8117 4.18827 17.6204 5.22354 17.8978C5.60504 18 6.07003 18 7 18Z" 
-                          stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                              Your Assessment Results
-                            </h4>
-                            <p className="text-[#103138]/80 leading-relaxed">
-                              {userName ? `${userName}, your` : 'Your'} organization is at the <strong className="text-[#103138]">{userTier}</strong> tier of AI maturity.
-                              {getTierDescription(userTier)}
-                            </p>
-                          </div>
-                        </div>
-                        
-                        <div className="p-6 border-t border-gray-100">
-                          <div className="flex items-center justify-between">
-                            <h4 className="font-semibold text-[#103138]">Next Steps</h4>
-                            <button onClick={() => handleTabChange('Strategic Action Plan')} className="text-sm text-[#20E28F] font-medium hover:text-[#103138] transition-colors flex items-center gap-1">
-                              View Action Plan
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                              </svg>
-                            </button>
-                          </div>
-                          <p className="text-sm text-[#103138]/70 mt-2">
-                            Explore your detailed results and recommendations in the sections of this report. We've created a personalized action plan to help advance your AI maturity.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                {/* Overall Tier Section - Removed since the tab no longer exists */}
 
                 <div ref={keyFindingsRef} className={`section-content ${activeTab !== 'Key Findings' && 'hidden'}`}>
                   <KeyFindingsSection 
@@ -1973,7 +1916,7 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
+            padding: 1rem 2rem 1rem 1rem; /* Reduce left padding */
             position: sticky;
             top: 0;
             z-index: 10;
@@ -1987,6 +1930,8 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding-left: 0; /* Remove left padding */
+            position: relative; /* Position relative for absolute positioning */
           }
           
           .header h1 {
@@ -2068,24 +2013,26 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
             gap: 2rem;
             max-width: 1280px;
             margin: 2rem auto;
-            padding: 0 2rem;
+            padding: 0 2rem 0 0; /* Removed left padding */
             flex-grow: 1;
-            height: calc(100vh - 120px); /* Set explicit height for container */
+            height: calc(100vh - 120px);
           }
           
           .sidebar {
             background: ${colors.white};
-            border-radius: 16px;
+            border-radius: 0 16px 16px 0; /* Rounded on right side only */
             padding: 1.5rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            height: fit-content;
-            position: sticky;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
+            height: calc(100vh - 120px);
+            position: fixed;
             top: 100px;
+            left: 0;
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
-            max-height: calc(100vh - 120px); /* Match parent container height */
-            overflow-y: auto; /* Allow sidebar to scroll if content exceeds height */
+            width: 280px;
+            overflow-y: auto;
+            z-index: 5;
           }
           
           .tier-indicator {
@@ -2519,7 +2466,11 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
           @media (max-width: 1024px) {
             .main-content {
               grid-template-columns: 240px 1fr;
-              padding: 0 1rem;
+              padding: 0 1rem 0 0;
+            }
+            
+            .sidebar {
+              width: 240px;
             }
             
             .content-panel {
@@ -2538,7 +2489,17 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
             }
             
             .sidebar {
-              display: none; /* Hide sidebar on mobile - replaced with mobile menu */
+              display: none; /* Hide sidebar on mobile by default */
+              width: 80%; /* When shown via mobile menu, take up most of the screen width */
+              max-width: 300px;
+              border-radius: 0; /* No border radius on mobile */
+              box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+            }
+            
+            /* Show sidebar when mobile menu is open */
+            .mobile-menu-open .sidebar {
+              display: flex;
+              z-index: 40;
             }
             
             .content-panel {
@@ -2546,6 +2507,7 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
               max-height: none;
               padding: 1rem;
               min-height: 60vh; /* Ensure minimum content height */
+              margin-left: 0; /* Ensure no margin is applied */
             }
             
             .insights-grid {
@@ -2573,6 +2535,11 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
             .header {
               position: sticky; /* Keep sticky positioning but ensure proper z-index */
               z-index: 30; /* Ensure header is above content but below mobile menu */
+            }
+            
+            /* Mobile menu overlay styles */
+            .mobile-menu-overlay {
+              z-index: 50;
             }
           }
           

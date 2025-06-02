@@ -29,6 +29,7 @@ export default function RootLayout({
     <html lang="en" className={`${plusJakartaSans.variable}`}>
       <head>
         <link rel="icon" href="/favicon.svg" />
+        <script defer src="https://sg-umami.is0dbo.easypanel.host/script.js" data-website-id="27d1885e-83b4-4631-b387-9ca74b6cc477"></script>
       </head>
       <body className="font-plus-jakarta bg-sg-light-mint min-h-screen">
         {children}

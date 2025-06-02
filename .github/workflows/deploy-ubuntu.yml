@@ -1,0 +1,127 @@
+name: Deploy to Ubuntu Server
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.x
+      
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+      
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+            node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+            
+      - name: Cache Next.js build
+        uses: actions/cache@v3
+        with:
+          path: |
+            .next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-
+            
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Build
+        run: pnpm run build
+        
+      - name: Create standalone package
+        run: |
+          # Ensure .next/standalone directory exists after build
+          if [ -d ".next/standalone" ]; then
+            echo ".next/standalone directory exists - build successful"
+          else
+            echo ".next/standalone directory doesn't exist - build may have failed or standalone output is not configured"
+            exit 1
+          fi
+          
+          # Create deployment package
+          mkdir -p deployment
+          cp -r .next/standalone/* deployment/
+          cp -r .next/static deployment/.next/
+          cp -r public deployment/
+          
+          # Add PM2 ecosystem file
+          cp ecosystem.config.js deployment/
+          
+          # Create deployment archive
+          tar -czf deployment.tar.gz deployment/
+      
+      - name: Copy file to Ubuntu server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "deployment.tar.gz"
+          target: "/tmp"
+      
+      - name: Deploy to Ubuntu server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Create deployment directory
+            mkdir -p ~/app
+            
+            # Extract deployment package
+            tar -xzf /tmp/deployment.tar.gz -C ~/
+            cp -r ~/deployment/* ~/app/
+            
+            # Install PM2 if not already installed
+            if ! command -v pm2 &> /dev/null; then
+              echo "Installing PM2..."
+              npm install -g pm2
+            fi
+            
+            # Stop any running instances
+            pm2 stop all || true
+            
+            # Kill any process on port 3006
+            fuser -k 3006/tcp || true
+            
+            # Start application with PM2
+            cd ~/app
+            pm2 start ecosystem.config.js
+            
+            # Save PM2 configuration for auto restart
+            pm2 save
+            
+            # Setup PM2 to start on boot
+            pm2 startup
+            
+            # Clean up
+            rm -rf ~/deployment
+            rm /tmp/deployment.tar.gz
+            
+            echo "Deployment complete!" 

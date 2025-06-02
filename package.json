@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "predev": "npx kill-port 3006",
-    "dev": "next dev",
+    "dev": "next dev -p 3006",
     "dev:windows": "powershell -Command \"next dev -p 3006\"",
     "build": "next build",
     "postbuild": "node copy-public-assets.js",
     "start": "next start -p 3006",
+    "start:production": "$env:PORT=3006; node .next/standalone/server.js",
     "lint": "next lint",
     "test-pdf": "node test-pdf-generation.js",
     "verify": "node verify-deploy-readiness.js",
