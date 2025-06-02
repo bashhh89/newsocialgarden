@@ -2083,12 +2083,10 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
           }
           
           .main-content {
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 2rem;
+            display: block; /* CHANGED: Use block instead of grid since sidebar is fixed */
             max-width: 1280px;
             margin: 2rem auto;
-            padding: 0 2rem 0 0; /* Removed left padding */
+            padding: 0 2rem 0 0;
             flex-grow: 1;
             height: calc(100vh - 120px);
           }
@@ -2266,6 +2264,7 @@ export default function NewResultsPage({ initialUserName }: NewResultsPageProps 
             height: calc(100vh - 120px);
             transition: opacity 0.3s ease;
             box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.01);
+            margin-left: 300px; /* CRITICAL FIX: Add left margin to account for fixed sidebar */
           }
           
           .content-panel.fade-out {
