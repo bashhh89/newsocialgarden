@@ -4,7 +4,7 @@
 # and helps with diagnosis, mitigation, and communication.
 
 # Configuration
-APP_NAME="sg-ai-scorecard"
+APP_NAME="social-garden-scorecard"
 APP_DIR="/home/nodejs/app"
 LOG_DIR="/home/nodejs/logs"
 INCIDENT_LOG="${LOG_DIR}/incidents.log"

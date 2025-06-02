@@ -66,7 +66,7 @@ const logger = winston.createLogger({
   levels: customLevels.levels,
   level: process.env.LOG_LEVEL || 'info',
   format: structuredFormat,
-  defaultMeta: { service: 'sg-ai-scorecard' },
+  defaultMeta: { service: 'social-garden-scorecard' },
   transports: [
     // Write errors to error.log
     new winston.transports.File({ 

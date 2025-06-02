@@ -4,7 +4,7 @@
 # functions for restoring from those backups.
 
 # Configuration
-APP_NAME="sg-ai-scorecard"
+APP_NAME="social-garden-scorecard"
 APP_DIR="/home/nodejs/app"
 BACKUP_DIR="/home/nodejs/backups"
 ENV_FILE="${APP_DIR}/.env.local"
@@ -42,7 +42,7 @@ show_usage() {
   echo "Examples:"
   echo "  $0 backup           # Create a new backup"
   echo "  $0 list             # List available backups"
-  echo "  $0 restore sg-ai-scorecard_backup_20230101_120000.tar.gz  # Restore from backup"
+  echo "  $0 restore social-garden-scorecard_backup_20230101_120000.tar.gz  # Restore from backup"
 }
 
 # Create backup

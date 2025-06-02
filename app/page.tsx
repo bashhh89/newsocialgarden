@@ -839,7 +839,7 @@ export default function Home() {
 
         // CRITICAL FIX: Force immediate navigation to results page with reportId
         console.log(`FRONTEND: Attempting navigation to results page at: ${new Date().toISOString()}`);
-        console.log(`>>> FRONTEND: �� Forcing navigation to /scorecard/results?reportId=${reportID}`);
+        console.log(`>>> FRONTEND: Forcing navigation to /scorecard/results?reportId=${reportID}`);
 
         // Add delay before navigation to ensure all state is properly saved
         setTimeout(() => {
@@ -1010,7 +1010,31 @@ export default function Home() {
       }
 
       if (newHistoryLength >= MAX_QUESTIONS) {
-        console.log(`>>> FRONTEND: Reached maximum questions (${MAX_QUESTIONS}). Completing assessment.`);
+        console.log(`>>> FRONTEND: Reached maximum questions (${MAX_QUESTIONS}). Checking lead capture status.`);
+
+        // If lead is not captured, show lead capture form instead of generating report
+        if (!leadCaptured) {
+          console.log(`>>> FRONTEND: Lead not captured. Showing lead capture form.`);
+          
+          // Stop auto-complete if it's running
+          if (isAutoCompleting) {
+            console.log('[Parent] Assessment completed but lead not captured, disabling auto-complete.');
+            setIsAutoCompleting(false);
+          }
+          
+          setScorecardState(prev => ({
+            ...prev,
+            isLoading: false,
+            overall_status: 'assessment-completed-lead-required', // New status to indicate assessment done but lead needed
+            currentQuestionNumber: MAX_QUESTIONS
+          }));
+          
+          // Show lead capture form
+          setCurrentStep('leadCapture');
+          return;
+        }
+
+        console.log(`>>> FRONTEND: Assessment completed and lead captured. Generating report.`);
 
         // CRITICAL FIX: Immediately set currentStep to 'results' to prevent showing question screens
         setCurrentStep('results');
@@ -1259,10 +1283,27 @@ export default function Home() {
       );
     }
 
+    // Post-Assessment Lead Capture - when assessment is complete but lead capture needed
+    if (scorecardState.overall_status === 'assessment-completed-lead-required' || 
+        (currentStep === 'leadCapture' && scorecardState.currentQuestionNumber >= MAX_QUESTIONS)) {
+      return (
+        <div className="mt-12">
+          <LeadCaptureForm
+            aiTier="Assessment Completed" // Indicate assessment is done
+            onSubmitSuccess={handleLeadCaptureSuccess} // This will generate report and navigate
+            reportMarkdown={null} // Report will be generated after lead capture
+            questionAnswerHistory={scorecardState.history} // Pass complete history
+            industry={selectedIndustry} // Pass the selected industry to the form
+          />
+        </div>
+      );
+    }
+
     // Assessment Questions - Only show if not reached max questions and lead form not required
     if (currentStep === 'assessment' && 
         scorecardState.currentQuestionNumber <= MAX_QUESTIONS && 
         scorecardState.overall_status !== 'lead-capture-required' &&
+        scorecardState.overall_status !== 'assessment-completed-lead-required' &&
         scorecardState.overall_status !== 'completed') {
       return (
         <AssessmentQuestion
