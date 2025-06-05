@@ -139,7 +139,7 @@ export default function LandingPage() {
                   
                   <div className="p-4 bg-white/5 rounded-lg border border-white/10">
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="text-sm font-medium text-white">Your AI Maturity Score</h4>
+                      <h4 className="text-sm font-medium text-white">Your AI Efficiency Score</h4>
                       <span className="text-xs text-gray-300">Example</span>
                     </div>
                     <div className="h-4 bg-white/10 rounded-full overflow-hidden mb-2">
@@ -223,7 +223,7 @@ export default function LandingPage() {
                     <svg className="w-5 h-5 text-sg-light-blue mt-0.5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
-                    <span>Receive detailed analysis of your AI maturity level</span>
+                    <span>Receive detailed analysis of your AI efficiency level</span>
                   </li>
                   <li className="flex items-start">
                     <svg className="w-5 h-5 text-sg-light-blue mt-0.5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -279,7 +279,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* AI Maturity Tiers Section - Moved higher */}
+      {/* AI Efficiency Tiers Section - Moved higher */}
       <section className="py-20 relative overflow-hidden">
         {/* Background pattern */}
         <div className="absolute inset-0 bg-[radial-gradient(#20E28F05_1px,transparent_1px)] bg-[size:16px_16px]"></div>
@@ -287,10 +287,10 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-sg-dark-teal mb-4">
-              Discover Your AI Maturity Level
+              Discover Your AI Efficiency Level
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Our AI Efficiency Scorecard identifies your organization's current AI maturity tier and provides a personalized roadmap tailored to your specific needs.
+              Our AI Efficiency Scorecard identifies your organization's current AI efficiency tier and provides a personalized roadmap tailored to your specific needs.
             </p>
           </div>
 
@@ -454,11 +454,11 @@ export default function LandingPage() {
               <svg className="w-5 h-5 text-sg-bright-green mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span>Every assessment includes a comprehensive report with your exact maturity score</span>
+              <span>Every assessment includes a comprehensive report with your exact efficiency score</span>
             </div>
             
             <Link href="/" className="btn-primary-divine inline-flex items-center text-center justify-center">
-              Discover Your AI Maturity Tier
+              Discover Your AI Efficiency Tier
               <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
@@ -578,7 +578,7 @@ export default function LandingPage() {
             </div>
             
             <h2 className="text-3xl md:text-4xl font-bold text-sg-dark-teal mb-4">
-              Get tailored resources for your <span className="text-sg-bright-green">AI maturity</span>
+              Get tailored resources for your <span className="text-sg-bright-green">AI efficiency</span>
             </h2>
             
             <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-12">
