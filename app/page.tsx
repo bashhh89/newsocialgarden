@@ -221,7 +221,7 @@ const IndustrySelection = ({
         {/* Simple Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-sg-dark-teal font-plus-jakarta mb-6">
-            AI Maturity Assessment
+            AI Efficiency Assessment
           </h1>
           <p className="text-xl text-sg-dark-teal/70 font-plus-jakarta max-w-2xl mx-auto">
             {scorecardState.isLoading ? 'Preparing your personalized assessment...' : 'Select your industry to begin'}

@@ -615,7 +615,7 @@ Provide a realistic answer for a ${testPersonaTier} tier organization in the ${i
                 </svg>
               </div>
               <div>
-                <h1 className="text-sm sm:text-lg font-bold text-sg-dark-teal font-plus-jakarta">AI Maturity Assessment</h1>
+                <h1 className="text-sm sm:text-lg font-bold text-sg-dark-teal font-plus-jakarta">AI Efficiency Assessment</h1>
                 <div className="inline-flex items-center px-3 py-1.5 bg-sg-dark-teal/10 text-sg-dark-teal rounded-full text-sm font-medium font-plus-jakarta mb-3 sm:mb-4">
                   <span className="w-2 h-2 bg-sg-dark-teal rounded-full mr-2 animate-pulse"></span>
                   {currentPhaseName}
@@ -674,7 +674,7 @@ Provide a realistic answer for a ${testPersonaTier} tier organization in the ${i
                 {question}
               </h2>
           <p className="text-base sm:text-lg text-sg-dark-teal/70 leading-relaxed font-plus-jakarta max-w-4xl">
-                Select your response to continue building your AI maturity profile.
+                Select your response to continue building your AI efficiency profile.
               </p>
             </div>
 

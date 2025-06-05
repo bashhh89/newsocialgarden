@@ -112,7 +112,7 @@ export default function SidebarNav({
         {/* Enhanced tier display */}
         <div className="mb-8 bg-sg-dark-teal/30 rounded-lg p-3 border border-sg-bright-green/20">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-xs text-white font-semibold font-plus-jakarta">Your AI Maturity</span>
+            <span className="text-xs text-white font-semibold font-plus-jakarta">Your AI Efficiency</span>
             <span className="text-xs text-sg-bright-green font-bold font-plus-jakarta">{tier}</span>
           </div>
           <div className="w-full h-2 bg-sg-bright-green/20 rounded-full">

@@ -16,7 +16,7 @@ export default function LandingPage() {
                 Measure Your AI Readiness with Our <span className="text-sg-bright-green">Free</span> AI Efficiency Scorecard
               </h1>
               <p className="text-xl mb-8">
-                Get a personalized assessment of your organization's AI maturity and actionable recommendations in just 8-10 minutes.
+                Get a personalized assessment of your organization's AI efficiency and actionable recommendations in just 8-10 minutes.
               </p>
               <Link href="/scorecard" className="btn-primary-divine inline-flex items-center text-center justify-center">
                 Take the Free Assessment
@@ -47,7 +47,7 @@ export default function LandingPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
-                    <p className="text-sm">Get your personalized AI maturity tier (Dabbler, Enabler, or Leader)</p>
+                    <p className="text-sm">Get your personalized AI efficiency tier (Dabbler, Enabler, or Leader)</p>
                   </div>
                   <div className="flex items-start space-x-3">
                     <div className="p-1 bg-sg-bright-green/10 rounded-full mt-1">
@@ -101,7 +101,7 @@ export default function LandingPage() {
                 <h3 className="text-xl font-semibold text-sg-dark-teal">Assess</h3>
               </div>
               <p className="text-sg-dark-teal/80">
-                Evaluate your current AI maturity across key dimensions including strategy, data readiness, technology, team skills, and governance.
+                Evaluate your current AI efficiency across key dimensions including strategy, data readiness, technology, team skills, and governance.
               </p>
             </div>
 
@@ -181,7 +181,7 @@ export default function LandingPage() {
                   <div>
                     <h3 className="font-semibold text-sg-dark-teal text-lg mb-1">Get Your Personalized Report</h3>
                     <p className="text-sg-dark-teal/80">
-                      Receive your AI maturity tier and a comprehensive report with actionable insights and recommendations.
+                      Receive your AI efficiency tier and a comprehensive report with actionable insights and recommendations.
                     </p>
                   </div>
                 </div>
@@ -209,7 +209,7 @@ export default function LandingPage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
                       </div>
-                      <h4 className="font-medium text-sg-dark-teal">Your AI Maturity Tier</h4>
+                      <h4 className="font-medium text-sg-dark-teal">Your AI Efficiency Tier</h4>
                     </div>
                     <p className="text-sm text-sg-dark-teal/80">
                       Find out if you're a Dabbler, Enabler, or Leader in AI adoption and what it means for your business.
@@ -240,7 +240,7 @@ export default function LandingPage() {
                       <h4 className="font-medium text-sg-dark-teal">Strategic Action Plan</h4>
                     </div>
                     <p className="text-sm text-sg-dark-teal/80">
-                      Specific, prioritized recommendations to help you advance to the next level of AI maturity.
+                      Specific, prioritized recommendations to help you advance to the next level of AI efficiency.
                     </p>
                   </div>
                 </div>

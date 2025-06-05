@@ -102,9 +102,9 @@ Organizations at the Dabbler tier in the ${industryName} sector typically compar
 | Governance | Formal AI ethics framework addressing ${industryName}-specific concerns | Basic policies covering essential ${industryName} concerns | No ${industryName} AI governance |
 `,
       unknown: `
-### ${industryName} AI Maturity Benchmarks
+### ${industryName} AI Efficiency Benchmarks
 
-Organizations across different AI maturity levels in the ${industryName} sector typically demonstrate these characteristics:
+Organizations across different AI efficiency levels in the ${industryName} sector typically demonstrate these characteristics:
 
 - **Leader Tier**: Comprehensive AI strategy with clear ${industryName}-specific goals, enterprise data platforms tailored to ${industryName} requirements, dedicated AI teams with ${industryName} expertise, scalable infrastructure optimized for ${industryName} use cases, and formal governance addressing ${industryName}-specific concerns.
 
@@ -195,7 +195,7 @@ To determine where your organization stands in the ${industryName} sector, revie
         </h3>
         <p className="text-sg-dark-teal/80 leading-relaxed">
           This section provides {industry ? `${industry}-specific` : ''} benchmarks to help you understand how your organization 
-          compares to others at different AI maturity levels in {industry ? `the ${industry} sector` : 'your industry'}. 
+          compares to others at different AI efficiency levels in {industry ? `the ${industry} sector` : 'your industry'}. 
           These comparisons can help guide your improvement strategy and set realistic goals for your organization.
         </p>
       </div>

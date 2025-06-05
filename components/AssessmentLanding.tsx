@@ -18,7 +18,7 @@ const AssessmentLanding: React.FC<AssessmentLandingProps> = ({
         </svg>
       ),
       title: "Personalized Analysis",
-      description: "Receive a tailored assessment of your organization's AI maturity level."
+      description: "Receive a tailored assessment of your organization's AI efficiency level."
     },
     {
       icon: (
@@ -76,7 +76,7 @@ const AssessmentLanding: React.FC<AssessmentLandingProps> = ({
         <div className="md:w-1/2">
           <h1 className="text-4xl md:text-5xl font-extrabold text-sg-dark-teal mb-4 leading-tight">
             Assess Your Organization's 
-            <span className="text-sg-mint-green"> AI Maturity</span>
+            <span className="text-sg-mint-green"> AI Efficiency</span>
           </h1>
           <p className="text-gray-600 text-lg mb-8 leading-relaxed">
             Take our comprehensive assessment to understand where your organization stands in its AI journey and discover actionable insights to advance your capabilities.
@@ -130,7 +130,7 @@ const AssessmentLanding: React.FC<AssessmentLandingProps> = ({
               {/* Sample score indicator */}
               <div className="bg-sg-light-mint p-4 rounded-xl border border-[#E0F7F0]">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="font-medium text-sg-dark-teal">Your AI Maturity Score</span>
+                  <span className="font-medium text-sg-dark-teal">Your AI Efficiency Score</span>
                   <span className="text-sg-dark-teal font-bold">?</span>
                 </div>
                 <div className="w-full bg-white rounded-full h-2.5">
