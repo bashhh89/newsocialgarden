@@ -107,7 +107,7 @@ export default function LandingPage() {
                         </svg>
                       </div>
                       <div>
-                        <p className="text-sm font-medium">AI Maturity Assessment</p>
+                        <p className="text-sm font-medium">AI Efficiency Assessment</p>
                         <p className="text-xs text-gray-300">Discover if you're a Dabbler, Enabler, or Leader</p>
                       </div>
                     </div>
@@ -150,57 +150,6 @@ export default function LandingPage() {
                       <span>Enabler</span>
                       <span>Leader</span>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Animated scrolling companies */}
-          <div className="mt-16 relative">
-            <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-sg-dark-teal to-transparent z-10"></div>
-            <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-sg-dark-teal to-transparent z-10"></div>
-            
-            <div className="text-center mb-4 text-sm text-gray-400">
-              Trusted by forward-thinking companies in various industries
-            </div>
-            
-            <div className="overflow-hidden">
-              <div className="flex space-x-8 animate-marquee">
-                {/* Logo placeholders for industries */}
-                <div className="flex-shrink-0">
-                  <div className="w-32 h-16 bg-gray-300/20 border border-gray-400/30 rounded flex items-center justify-center">
-                    <span className="text-xs text-gray-400 text-center px-2">Property/Real Estate Logo</span>
-                  </div>
-                </div>
-                <div className="flex-shrink-0">
-                  <div className="w-32 h-16 bg-gray-300/20 border border-gray-400/30 rounded flex items-center justify-center">
-                    <span className="text-xs text-gray-400 text-center px-2">Higher Education Logo</span>
-                  </div>
-                </div>
-                <div className="flex-shrink-0">
-                  <div className="w-32 h-16 bg-gray-300/20 border border-gray-400/30 rounded flex items-center justify-center">
-                    <span className="text-xs text-gray-400 text-center px-2">B2B Tech/SaaS Logo</span>
-                  </div>
-                </div>
-                <div className="flex-shrink-0">
-                  <div className="w-32 h-16 bg-gray-300/20 border border-gray-400/30 rounded flex items-center justify-center">
-                    <span className="text-xs text-gray-400 text-center px-2">Financial Services Logo</span>
-                  </div>
-                </div>
-                <div className="flex-shrink-0">
-                  <div className="w-32 h-16 bg-gray-300/20 border border-gray-400/30 rounded flex items-center justify-center">
-                    <span className="text-xs text-gray-400 text-center px-2">Automotive Logo</span>
-                  </div>
-                </div>
-                <div className="flex-shrink-0">
-                  <div className="w-32 h-16 bg-gray-300/20 border border-gray-400/30 rounded flex items-center justify-center">
-                    <span className="text-xs text-gray-400 text-center px-2">E-commerce Logo</span>
-                  </div>
-                </div>
-                <div className="flex-shrink-0">
-                  <div className="w-32 h-16 bg-gray-300/20 border border-gray-400/30 rounded flex items-center justify-center">
-                    <span className="text-xs text-gray-400 text-center px-2">Not for Profit Logo</span>
                   </div>
                 </div>
               </div>
