@@ -158,6 +158,61 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Animated scrolling companies */}
+      <section className="py-8 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-white to-transparent z-10"></div>
+            <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-white to-transparent z-10"></div>
+            
+            <div className="text-center mb-4 text-sm text-gray-500">
+              Trusted by forward-thinking companies in various industries
+            </div>
+            
+            <div className="overflow-hidden">
+              <div className="flex space-x-8 animate-marquee">
+                {/* Logo placeholders for industries */}
+                <div className="flex-shrink-0">
+                  <div className="w-32 h-16 bg-gray-100 border border-gray-200 rounded flex items-center justify-center">
+                    <span className="text-xs text-gray-500 text-center px-2">Property/Real Estate Logo</span>
+                  </div>
+                </div>
+                <div className="flex-shrink-0">
+                  <div className="w-32 h-16 bg-gray-100 border border-gray-200 rounded flex items-center justify-center">
+                    <span className="text-xs text-gray-500 text-center px-2">Higher Education Logo</span>
+                  </div>
+                </div>
+                <div className="flex-shrink-0">
+                  <div className="w-32 h-16 bg-gray-100 border border-gray-200 rounded flex items-center justify-center">
+                    <span className="text-xs text-gray-500 text-center px-2">B2B Tech/SaaS Logo</span>
+                  </div>
+                </div>
+                <div className="flex-shrink-0">
+                  <div className="w-32 h-16 bg-gray-100 border border-gray-200 rounded flex items-center justify-center">
+                    <span className="text-xs text-gray-500 text-center px-2">Financial Services Logo</span>
+                  </div>
+                </div>
+                <div className="flex-shrink-0">
+                  <div className="w-32 h-16 bg-gray-100 border border-gray-200 rounded flex items-center justify-center">
+                    <span className="text-xs text-gray-500 text-center px-2">Automotive Logo</span>
+                  </div>
+                </div>
+                <div className="flex-shrink-0">
+                  <div className="w-32 h-16 bg-gray-100 border border-gray-200 rounded flex items-center justify-center">
+                    <span className="text-xs text-gray-500 text-center px-2">E-commerce Logo</span>
+                  </div>
+                </div>
+                <div className="flex-shrink-0">
+                  <div className="w-32 h-16 bg-gray-100 border border-gray-200 rounded flex items-center justify-center">
+                    <span className="text-xs text-gray-500 text-center px-2">Not for Profit Logo</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* AI Benefits Section */}
       <section id="benefits" className="py-20 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
